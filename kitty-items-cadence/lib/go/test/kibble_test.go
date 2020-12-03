@@ -73,7 +73,7 @@ func TestKibbleDeployment(t *testing.T) {
 	fungibleAddr, kibbleAddr := DeployTokenContracts(b, t, []*flow.AccountKey{kibbleAccountKey})
 
 	t.Run("Should have initialized Supply field correctly", func(t *testing.T) {
-		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr))
+		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr), nil)
 		expectedSupply, expectedSupplyErr := cadence.NewUFix64("1000.0")
 		assert.NoError(t, expectedSupplyErr)
 		assert.Equal(t, supply.(cadence.UFix64), expectedSupply)
@@ -115,7 +115,7 @@ func TestKibbleSetupAccount(t *testing.T) {
 
 		assert.Equal(t, CadenceUFix64("0.0"), balance)
 
-		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr))
+		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr), nil)
 		assert.Equal(t, CadenceUFix64("1000.0"), supply.(cadence.UFix64))
 	})
 }
@@ -217,7 +217,7 @@ func TestKibbleExternalTransfers(t *testing.T) {
 		balance = result.Value
 		assert.Equal(t, balance.(cadence.UFix64), CadenceUFix64("300.0"))
 
-		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr))
+		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr), nil)
 		assert.Equal(t, supply.(cadence.UFix64), CadenceUFix64("1000.0"))
 	})
 }
@@ -289,7 +289,7 @@ func TestKibbleVaultDestroy(t *testing.T) {
 		balance := result.Value
 		assert.Equal(t, balance.(cadence.UFix64), CadenceUFix64("600.0"))
 
-		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr))
+		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr), nil)
 		assert.Equal(t, supply.(cadence.UFix64), CadenceUFix64("900.0"))
 	})
 
@@ -317,7 +317,7 @@ func TestKibbleVaultDestroy(t *testing.T) {
 		balance := result.Value
 		assert.Equal(t, balance.(cadence.UFix64), CadenceUFix64("200.0"))
 
-		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr))
+		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr), nil)
 		assert.Equal(t, supply.(cadence.UFix64), CadenceUFix64("800.0"))
 	})
 	*/
@@ -385,7 +385,7 @@ func TestKibbleMintingAndBurning(t *testing.T) {
 		balance = result.Value
 		assert.Equal(t, balance.(cadence.UFix64), CadenceUFix64("0.0"))
 
-		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr))
+		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr), nil)
 		assert.Equal(t, supply.(cadence.UFix64), CadenceUFix64("1000.0"))
 	})
 
@@ -425,7 +425,7 @@ func TestKibbleMintingAndBurning(t *testing.T) {
 		balance = result.Value
 		assert.Equal(t, balance.(cadence.UFix64), CadenceUFix64("50.0"))
 
-		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr))
+		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr), nil)
 		assert.Equal(t, supply.(cadence.UFix64), CadenceUFix64("1050.0"))
 	})
 
@@ -455,7 +455,7 @@ func TestKibbleMintingAndBurning(t *testing.T) {
 		balance := result.Value
 		assert.Equal(t, balance.(cadence.UFix64), CadenceUFix64("950.0"))
 
-		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr))
+		supply := executeScriptAndCheck(t, b, generateGetSupplyScript(fungibleAddr, kibbleAddr), nil)
 		assert.Equal(t, supply.(cadence.UFix64), CadenceUFix64("1000.0"))
 	})*/
 }
