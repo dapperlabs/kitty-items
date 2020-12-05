@@ -8,12 +8,14 @@ import (
 
 	"github.com/onflow/cadence"
 	emulator "github.com/onflow/flow-emulator"
+	"github.com/onflow/flow-go-sdk"
 	"github.com/onflow/flow-go-sdk/crypto"
+	"github.com/onflow/flow-go-sdk/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/onflow/cadence/runtime/cmd"
-	"github.com/onflow/flow-go-sdk"
+	sdk "github.com/onflow/flow-go-sdk"
 )
 
 // newEmulator returns a emulator object for testing
@@ -127,4 +129,13 @@ func replaceStrings(
 		)
 	}
 	return source
+}
+
+// Simple error-handling wrapper for Flow account creation.
+func createAccount(t *testing.T, b *emulator.Blockchain) (sdk.Address, crypto.Signer, *sdk.AccountKey) {
+	accountKeys := test.AccountKeyGenerator()
+	accountKey, signer := accountKeys.NewWithSigner()
+	address, err := b.CreateAccount([]*sdk.AccountKey{accountKey}, nil)
+	require.NoError(t, err)
+	return address, signer, accountKey
 }
