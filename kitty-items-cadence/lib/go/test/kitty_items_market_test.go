@@ -15,11 +15,11 @@ import (
 )
 
 const (
-	kittyItemsMarketRootPath              = "../../../cadence/KittyItemsMarket"
-	kittyItemsMarketKittyItemsMarketPath  = kittyItemsMarketRootPath + "/contracts/KittyItemsMarket.cdc"
-	kittyItemsMarketSetupAccountPath      = kittyItemsMarketRootPath + "/transactions/setup_account.cdc"
-	kittyItemsMarketListItemOfferPath     = kittyItemsMarketRootPath + "/transactions/list_item_offer.cdc"
-	kittyItemsMarketPurchaseItemOfferPath = kittyItemsMarketRootPath + "/transactions/purchase_item_offer.cdc"
+	kittyItemsMarketRootPath             = "../../../cadence/KittyItemsMarket"
+	kittyItemsMarketKittyItemsMarketPath = kittyItemsMarketRootPath + "/contracts/KittyItemsMarket.cdc"
+	kittyItemsMarketSetupAccountPath     = kittyItemsMarketRootPath + "/transactions/setup_account.cdc"
+	kittyItemsMarketSellItemPath         = kittyItemsMarketRootPath + "/transactions/sell_market_item.cdc"
+	kittyItemsMarketBuyItemPath          = kittyItemsMarketRootPath + "/transactions/buy_market_item.cdc"
 )
 
 const (
@@ -93,7 +93,7 @@ func KittyItemsMarketSetupAccount(b *emulator.Blockchain, t *testing.T, userAddr
 	)
 }
 
-// Create a new account with the Kibble and KittyItems resources set up
+// Create a new account with the Kibble and KittyItems resources set up BUT no KittyItemsMarket resource.
 func KittyItemsMarketCreatePurchaserAccount(b *emulator.Blockchain, t *testing.T, contracts TestContractsInfo) (sdk.Address, crypto.Signer) {
 	userAddress, userSigner, _ := createAccount(t, b)
 	KibbleSetupAccount(t, b, userAddress, userSigner, contracts.FTAddr, contracts.KibbleAddr)
@@ -101,7 +101,7 @@ func KittyItemsMarketCreatePurchaserAccount(b *emulator.Blockchain, t *testing.T
 	return userAddress, userSigner
 }
 
-// Create a new account with the Kibble, KittyItems, and KittyItemsMarket resources set up
+// Create a new account with the Kibble, KittyItems, and KittyItemsMarket resources set up.
 func KittyItemsMarketCreateAccount(b *emulator.Blockchain, t *testing.T, contracts TestContractsInfo) (sdk.Address, crypto.Signer) {
 	userAddress, userSigner := KittyItemsMarketCreatePurchaserAccount(b, t, contracts)
 	KittyItemsMarketSetupAccount(b, t, userAddress, userSigner, contracts)
@@ -110,7 +110,7 @@ func KittyItemsMarketCreateAccount(b *emulator.Blockchain, t *testing.T, contrac
 
 func KittyItemsMarketListItem(b *emulator.Blockchain, t *testing.T, contracts TestContractsInfo, userAddress sdk.Address, userSigner crypto.Signer, tokenID uint64, price string, shouldFail bool) {
 	tx := flow.NewTransaction().
-		SetScript(kittyItemsMarketGenerateListItemOfferScript(contracts)).
+		SetScript(kittyItemsMarketGenerateSellItemScript(contracts)).
 		SetGasLimit(100).
 		SetProposalKey(b.ServiceKey().Address, b.ServiceKey().Index, b.ServiceKey().SequenceNumber).
 		SetPayer(b.ServiceKey().Address).
@@ -137,7 +137,7 @@ func KittyItemsMarketPurchaseItem(
 	shouldFail bool,
 ) {
 	tx := flow.NewTransaction().
-		SetScript(kittyItemsMarketGeneratePurchaseItemOfferScript(contracts)).
+		SetScript(kittyItemsMarketGenerateBuyItemScript(contracts)).
 		SetGasLimit(100).
 		SetProposalKey(b.ServiceKey().Address, b.ServiceKey().Index, b.ServiceKey().SequenceNumber).
 		SetPayer(b.ServiceKey().Address).
@@ -220,6 +220,7 @@ func TestKittyItemsMarketCreateSaleOffer(t *testing.T) {
 			buyerAddress,
 			"100.0",
 		)
+		// Make the purchase
 		KittyItemsMarketPurchaseItem(
 			b,
 			t,
@@ -264,16 +265,16 @@ func kittyItemsMarketGenerateSetupAccountScript(kittyItemsMarketAddr string) []b
 	return []byte(code)
 }
 
-func kittyItemsMarketGenerateListItemOfferScript(contracts TestContractsInfo) []byte {
+func kittyItemsMarketGenerateSellItemScript(contracts TestContractsInfo) []byte {
 	return replaceKittyItemsMarketAddressPlaceholders(
-		readFile(kittyItemsMarketListItemOfferPath),
+		readFile(kittyItemsMarketSellItemPath),
 		contracts,
 	)
 }
 
-func kittyItemsMarketGeneratePurchaseItemOfferScript(contracts TestContractsInfo) []byte {
+func kittyItemsMarketGenerateBuyItemScript(contracts TestContractsInfo) []byte {
 	return replaceKittyItemsMarketAddressPlaceholders(
-		readFile(kittyItemsMarketPurchaseItemOfferPath),
+		readFile(kittyItemsMarketBuyItemPath),
 		contracts,
 	)
 }
