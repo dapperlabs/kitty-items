@@ -47,8 +47,15 @@ func main() {
 	signer := crypto.NewInMemorySigner(conf.MinterPrivateKey, minterAccountKey.HashAlgo)
 
 	// Instantiate our internal services
-	flowService := services.NewFlow(flowClient, signer, conf.MinterFlowAddress, minterAccountKey)
-	kibblesService := services.NewKibbles(flowService)
+	flowService, err := services.NewFlow(flowClient, signer, conf.MinterFlowAddress, minterAccountKey)
+	if err != nil {
+		log.Fatalf("error creating flow service = %s", err)
+	}
+
+	kibblesService, err := services.NewKibbles(flowService)
+	if err != nil {
+		log.Fatalf("error creating kibbles service = %s", err)
+	}
 
 	r := mux.NewRouter()
 

@@ -15,13 +15,13 @@ type FlowService struct {
 	client           *client.Client
 }
 
-func NewFlow(client *client.Client, signer crypto.Signer, minterAddress flow.Address, minterAccountKey *flow.AccountKey) *FlowService {
+func NewFlow(client *client.Client, signer crypto.Signer, minterAddress flow.Address, minterAccountKey *flow.AccountKey) (*FlowService, error) {
 	return &FlowService{
 		signer:           signer,
 		minterAddress:    minterAddress,
 		minterAccountKey: minterAccountKey,
 		client:           client,
-	}
+	}, nil
 }
 
 // Send will submit a transaction on the blockchain with the given minterAddress
