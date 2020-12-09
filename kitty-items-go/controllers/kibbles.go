@@ -17,7 +17,7 @@ type kibblesController struct {
 
 type MintKibblesRequest struct {
 	FlowAddress string `json:"flowAddress"`
-	Amount      uint   `json:"amount"`
+	Amount      string `json:"amount"`
 }
 
 type MintKibblesResponse struct {

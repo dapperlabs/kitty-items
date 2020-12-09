@@ -17,6 +17,11 @@ type KibblesService struct {
 	mintKibblesTemplate string
 }
 
+type KibblesAddresses struct {
+	FungibleTokenAddress string
+	KibbleTokenAddress   string
+}
+
 func NewKibbles(service *FlowService) (*KibblesService, error) {
 	mintKibblesTemplate, err := template.New("mintKibbles").Parse(templates.MintKibblesTemplate)
 	if err != nil {
@@ -24,9 +29,9 @@ func NewKibbles(service *FlowService) (*KibblesService, error) {
 	}
 
 	var minterCode *bytes.Buffer
-	if err := mintKibblesTemplate.Execute(minterCode, map[string]string{
-		"FungibleTokenAddress": "",
-		"KibbleTokenAddress":   "",
+	if err := mintKibblesTemplate.Execute(minterCode, KibblesAddresses{
+		FungibleTokenAddress: service.FungibleContractAddress.String(),
+		KibbleTokenAddress:   service.KibblesContractAddress.String(),
 	}); err != nil {
 		return nil, fmt.Errorf("error mint template code = %w", err)
 	}

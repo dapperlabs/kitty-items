@@ -13,14 +13,21 @@ type FlowService struct {
 	minterAddress    flow.Address
 	minterAccountKey *flow.AccountKey
 	client           *client.Client
+
+	KibblesContractAddress  flow.Address
+	FungibleContractAddress flow.Address
 }
 
-func NewFlow(client *client.Client, signer crypto.Signer, minterAddress flow.Address, minterAccountKey *flow.AccountKey) (*FlowService, error) {
+func NewFlow(client *client.Client, signer crypto.Signer, minterAddress flow.Address, minterAccountKey *flow.AccountKey,
+	kibblesContractAddress flow.Address, fungibleContractAddress flow.Address,
+) (*FlowService, error) {
 	return &FlowService{
-		signer:           signer,
-		minterAddress:    minterAddress,
-		minterAccountKey: minterAccountKey,
-		client:           client,
+		signer:                  signer,
+		minterAddress:           minterAddress,
+		minterAccountKey:        minterAccountKey,
+		client:                  client,
+		KibblesContractAddress:  kibblesContractAddress,
+		FungibleContractAddress: fungibleContractAddress,
 	}, nil
 }
 

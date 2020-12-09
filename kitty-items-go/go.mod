@@ -7,8 +7,8 @@ require (
 	github.com/ethereum/go-ethereum v1.9.24 // indirect
 	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/gorilla/mux v1.8.0
-	github.com/kelseyhightower/envconfig v1.4.0 // indirect
-	github.com/onflow/cadence v0.11.2 // indirect
+	github.com/kelseyhightower/envconfig v1.4.0
+	github.com/onflow/cadence v0.11.2
 	github.com/onflow/flow-go-sdk v0.12.2
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/raviqqe/hamt v0.0.0-20200926195927-a161b94127cc // indirect

@@ -1,8 +1,8 @@
 package templates
 
 const MintKibblesTemplate = `
-import FungibleToken from 0x{{.FungibleTokenAddress}} 
-import Kibble from 0x{{.KibbleTokenAddress}}
+import FungibleToken from {{.FungibleTokenAddress}} 
+import Kibble from {{.KibbleTokenAddress}}
 
 transaction(recipient: Address, amount: UFix64) {
     let tokenAdmin: &Kibble.Administrator
