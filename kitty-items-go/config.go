@@ -51,11 +51,11 @@ func (e *FlowEnvironment) Decode(value string) error {
 func fungibleContractFor(environment FlowEnvironment) string {
 	switch environment {
 	case Emulator:
-		return "0xee82856bf20e2aa6"
+		return "ee82856bf20e2aa6"
 	case Testnet:
-		return "0x9a0766d93b6608b7"
+		return "9a0766d93b6608b7"
 	case Mainnet:
-		return "0xf233dcee88fe0abe"
+		return "f233dcee88fe0abe"
 	}
 	return ""
 }
