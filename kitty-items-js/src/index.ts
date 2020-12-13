@@ -3,6 +3,10 @@ import * as fcl from "@onflow/fcl";
 import initApp from "./app";
 import { KibblesService } from "./services/kibbles";
 import { FlowService } from "./services/flow";
+import {
+  fungibleTokenContractAddressFor,
+  parseFlowEnvironment,
+} from "./constants";
 
 async function run() {
   dotenv.config();
@@ -12,7 +16,14 @@ async function run() {
     process.env.MINTER_PRIVATE_KEY!,
     process.env.MINTER_ACCOUNT_KEY_IDX!
   );
-  const kibblesService = new KibblesService(flowService);
+
+  const flowEnv = parseFlowEnvironment(process.env.FLOW_ENV!);
+  const fungibleTokenContractAddress = fungibleTokenContractAddressFor(flowEnv);
+
+  const kibblesService = new KibblesService(flowService, {
+    fungibleTokenAddress: fungibleTokenContractAddress,
+    kibbleContractAddress: process.env.KIBBLE_CONTRACT_ADDRESS!,
+  });
 
   const app = initApp(kibblesService);
 
