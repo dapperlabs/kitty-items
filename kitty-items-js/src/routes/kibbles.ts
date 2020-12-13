@@ -9,7 +9,7 @@ function initKibblesRouter(kibblesService: KibblesService): Router {
   router.post(
     "/kibbles",
     [
-      body("flowAddress").exists().isAlpha().contains("0x"),
+      body("flowAddress").exists().contains("0x"),
       body("amount").isDecimal({
         force_decimal: true,
       }),
