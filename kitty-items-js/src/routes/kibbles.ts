@@ -9,9 +9,9 @@ function initKibblesRouter(kibblesService: KibblesService): Router {
   router.post(
     "/kibbles",
     [
-      body("flowAddress").exists(),
-      body("amount").isFloat({
-        gt: 0,
+      body("flowAddress").exists().isAlpha().contains("0x"),
+      body("amount").isDecimal({
+        force_decimal: true,
       }),
     ],
     validateRequest,
@@ -19,7 +19,7 @@ function initKibblesRouter(kibblesService: KibblesService): Router {
       const { flowAddress, amount } = req.body;
       const txId = await kibblesService.mintKibblesToAddress(
         flowAddress,
-        amount
+        amount.toString()
       );
       return res.send({
         transactionId: txId,
