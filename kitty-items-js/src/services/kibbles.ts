@@ -32,10 +32,11 @@ class KibblesService {
       `,
       fcl.args([
         fcl.arg(destinationAddress, t.Address),
-        fcl.arg(amount, t.UInt),
+        fcl.arg(amount, t.UFix64),
       ]),
       fcl.proposer(authorization),
       fcl.payer(authorization),
+      fcl.authorizations([authorization]),
       fcl.limit(100),
     ]);
 

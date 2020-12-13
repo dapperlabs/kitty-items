@@ -19,7 +19,7 @@ function initKibblesRouter(kibblesService: KibblesService): Router {
       const { flowAddress, amount } = req.body;
       const txId = await kibblesService.mintKibblesToAddress(
         flowAddress,
-        amount
+        amount.toString()
       );
       return res.send({
         transactionId: txId,
