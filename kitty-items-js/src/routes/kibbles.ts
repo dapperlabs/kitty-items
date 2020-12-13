@@ -10,7 +10,7 @@ function initKibblesRouter(kibblesService: KibblesService): Router {
     "/kibbles",
     [
       body("flowAddress").exists(),
-      body("amount").isInt({
+      body("amount").isFloat({
         gt: 0,
       }),
     ],
@@ -19,7 +19,7 @@ function initKibblesRouter(kibblesService: KibblesService): Router {
       const { flowAddress, amount } = req.body;
       const txId = await kibblesService.mintKibblesToAddress(
         flowAddress,
-        amount.toString()
+        amount
       );
       return res.send({
         transactionId: txId,
