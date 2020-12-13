@@ -9,11 +9,11 @@ export function fungibleTokenContractAddressFor(
 ): string {
   switch (environment) {
     case FlowEnvironment.Emulator:
-      return "0xee82856bf20e2aa6";
+      return "ee82856bf20e2aa6";
     case FlowEnvironment.Testnet:
-      return "0x9a0766d93b6608b7";
+      return "9a0766d93b6608b7";
     case FlowEnvironment.Mainnet:
-      return "0xf233dcee88fe0abe";
+      return "f233dcee88fe0abe";
   }
   return "";
 }
