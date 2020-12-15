@@ -2,11 +2,16 @@ import NonFungibleToken from 0xNONFUNGIBLETOKEN
 
 pub contract KittyItems: NonFungibleToken {
 
-    pub var totalSupply: UInt64
-
     pub event ContractInitialized()
     pub event Withdraw(id: UInt64, from: Address?)
     pub event Deposit(id: UInt64, to: Address?)
+    pub event Minted(id: UInt64, typeID: UInt64)
+
+    pub var totalSupply: UInt64
+
+    pub let CollectionStoragePath: StoragePath
+    pub let CollectionPublicPath: PublicPath
+    pub let MinterStoragePath: StoragePath
 
     pub resource NFT: NonFungibleToken.INFT {
         pub let id: UInt64
@@ -82,32 +87,29 @@ pub contract KittyItems: NonFungibleToken {
 		pub fun mintNFT(recipient: &{NonFungibleToken.CollectionPublic}, typeID: UInt64) {
 
 			// create a new NFT
-			var newNFT <- create NFT(initID: KittyItems.totalSupply, initTypeID: typeID)
+			var newNFT <-create NFT(initID: KittyItems.totalSupply, initTypeID: typeID)
+
+            emit Minted(id: newNFT.id, typeID: newNFT.typeID)
 
 			// deposit it in the recipient's account using their reference
 			recipient.deposit(token: <-newNFT)
 
-            KittyItems.totalSupply = KittyItems.totalSupply + UInt64(1)
+            KittyItems.totalSupply = KittyItems.totalSupply + (1 as UInt64)
 		}
 	}
 
 	init() {
+        // Set our named paths
+        self.CollectionStoragePath = /storage/KittyItemsCollection
+        self.CollectionPublicPath = /public/KittyItemsCollection
+        self.MinterStoragePath = /storage/KittyItemsMinter
+
         // Initialize the total supply
         self.totalSupply = 0
 
-        // Create a Collection resource and save it to storage
-        let collection <- create Collection()
-        self.account.save(<-collection, to: /storage/KittyItemsCollection)
-
-        // create a public capability for the collection
-        self.account.link<&{NonFungibleToken.CollectionPublic}>(
-            /public/KittyItemsCollection,
-            target: /storage/KittyItemsCollection
-        )
-
         // Create a Minter resource and save it to storage
         let minter <- create NFTMinter()
-        self.account.save(<-minter, to: /storage/KittyItemsMinter)
+        self.account.save(<-minter, to: self.MinterStoragePath)
 
         emit ContractInitialized()
 	}

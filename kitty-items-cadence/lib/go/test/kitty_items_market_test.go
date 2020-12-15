@@ -65,6 +65,9 @@ func KittyItemsMarketDeployContracts(b *emulator.Blockchain, t *testing.T) TestC
 	_, err = b.CommitBlock()
 	assert.NoError(t, err)
 
+	KittyItemsSetupAccount(t, b, kittyItemsAddr, kittyItemsSigner, nftAddr, kittyItemsAddr)
+	KittyItemsMarketSetupAccount(b, t, kittyItemsMarketAddr, kittyItemsMarketSigner, kittyItemsMarketAddr)
+
 	return TestContractsInfo{
 		ftAddr,
 		kibbleAddr,
@@ -77,9 +80,9 @@ func KittyItemsMarketDeployContracts(b *emulator.Blockchain, t *testing.T) TestC
 	}
 }
 
-func KittyItemsMarketSetupAccount(b *emulator.Blockchain, t *testing.T, userAddress sdk.Address, userSigner crypto.Signer, contracts TestContractsInfo) {
+func KittyItemsMarketSetupAccount(b *emulator.Blockchain, t *testing.T, userAddress sdk.Address, userSigner crypto.Signer, kittyItemsMarketAddr sdk.Address) {
 	tx := flow.NewTransaction().
-		SetScript(kittyItemsMarketGenerateSetupAccountScript(contracts.KittyItemsMarketAddr.String())).
+		SetScript(kittyItemsMarketGenerateSetupAccountScript(kittyItemsMarketAddr.String())).
 		SetGasLimit(100).
 		SetProposalKey(b.ServiceKey().Address, b.ServiceKey().Index, b.ServiceKey().SequenceNumber).
 		SetPayer(b.ServiceKey().Address).
@@ -104,7 +107,7 @@ func KittyItemsMarketCreatePurchaserAccount(b *emulator.Blockchain, t *testing.T
 // Create a new account with the Kibble, KittyItems, and KittyItemsMarket resources set up.
 func KittyItemsMarketCreateAccount(b *emulator.Blockchain, t *testing.T, contracts TestContractsInfo) (sdk.Address, crypto.Signer) {
 	userAddress, userSigner := KittyItemsMarketCreatePurchaserAccount(b, t, contracts)
-	KittyItemsMarketSetupAccount(b, t, userAddress, userSigner, contracts)
+	KittyItemsMarketSetupAccount(b, t, userAddress, userSigner, contracts.KittyItemsMarketAddr)
 	return userAddress, userSigner
 }
 
@@ -165,7 +168,7 @@ func TestKittyItemsMarketSetupAccount(t *testing.T) {
 
 	t.Run("Should be able to create an empty Collection", func(t *testing.T) {
 		userAddress, userSigner, _ := createAccount(t, b)
-		KittyItemsMarketSetupAccount(b, t, userAddress, userSigner, contracts)
+		KittyItemsMarketSetupAccount(b, t, userAddress, userSigner, contracts.KittyItemsMarketAddr)
 	})
 }
 
@@ -219,6 +222,7 @@ func TestKittyItemsMarketCreateSaleOffer(t *testing.T) {
 			contracts.KibbleSigner,
 			buyerAddress,
 			"100.0",
+			false,
 		)
 		// Make the purchase
 		KittyItemsMarketPurchaseItem(

@@ -44,6 +44,11 @@ pub contract KittyItemsMarket {
     // A sale offer has been removed from the collection of Address.
     pub event CollectionRemovedSaleOffer(saleItemID: UInt64, saleItemCollection: Address)
 
+    // Named paths
+    //
+    pub let CollectionStoragePath: StoragePath
+    pub let CollectionPublicPath: PublicPath
+
     // SaleOfferPublicView
     // An interface providing a read-only view of a SaleOffer
     //
@@ -264,5 +269,10 @@ pub contract KittyItemsMarket {
     //
     pub fun createEmptyCollection(): @Collection {
         return <-create Collection()
+    }
+
+    init () {
+        self.CollectionStoragePath = /storage/KittyItemsMarketCollection
+        self.CollectionPublicPath = /public/KittyItemsMarketCollection
     }
 }

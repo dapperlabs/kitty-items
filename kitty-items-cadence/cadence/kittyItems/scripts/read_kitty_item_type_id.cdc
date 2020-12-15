@@ -8,7 +8,7 @@ pub fun main(account: Address, kittyID: UInt64): UInt64 {
     let owner = getAccount(account)
 
     let collectionBorrow = owner
-        .getCapability(/public/KittyItemsCollection)!
+        .getCapability(KittyItems.CollectionPublicPath)!
         .borrow<&{NonFungibleToken.CollectionPublic}>()!
 
     // Borrow a reference to a specific NFT in the collection
