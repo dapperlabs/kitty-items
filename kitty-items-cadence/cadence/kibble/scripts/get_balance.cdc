@@ -1,4 +1,4 @@
-// This script reads the balance field of an account's FlowToken Balance
+// This script reads the balance field of an account's Kibble Balance
 
 import FungibleToken from 0xFUNGIBLETOKENADDRESS
 import Kibble from 0xKIBBLE
