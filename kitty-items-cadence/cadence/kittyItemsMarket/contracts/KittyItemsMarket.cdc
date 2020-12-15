@@ -79,7 +79,7 @@ pub contract KittyItemsMarket {
             buyerPayment: @FungibleToken.Vault
         ) {
             pre {
-                //buyerPayment.value == self.salePrice: "payment does not equal offer price"
+                buyerPayment.balance == self.salePrice: "payment does not equal offer price"
                 self.saleCompleted == false: "the sale offer has already been accepted"
             }
 
@@ -102,7 +102,7 @@ pub contract KittyItemsMarket {
 
         // initializer
         // Take the information required to create a sale offer, notably the capability
-        // to transfer the KittyItems NFT and the capability to receive FLOW in payment.
+        // to transfer the KittyItems NFT and the capability to receive Kibble in payment.
         //
         init(
             sellerItemProvider: Capability<&KittyItems.Collection{NonFungibleToken.Provider}>,
