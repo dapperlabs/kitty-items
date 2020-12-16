@@ -65,6 +65,7 @@ func KittyItemsMarketDeployContracts(b *emulator.Blockchain, t *testing.T) TestC
 	_, err = b.CommitBlock()
 	assert.NoError(t, err)
 
+	// Simplify the workflow by having contract addresses also be our initial test collections.
 	KittyItemsSetupAccount(t, b, kittyItemsAddr, kittyItemsSigner, nftAddr, kittyItemsAddr)
 	KittyItemsMarketSetupAccount(b, t, kittyItemsMarketAddr, kittyItemsMarketSigner, kittyItemsMarketAddr)
 
