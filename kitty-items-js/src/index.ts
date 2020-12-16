@@ -5,6 +5,7 @@ import { KibblesService } from "./services/kibbles";
 import { FlowService } from "./services/flow";
 import { KittyItemsService } from "./services/kittyItems";
 import { MarketService } from "./services/market";
+import { EventsService } from "./services/events";
 
 async function run() {
   dotenv.config();
@@ -30,6 +31,9 @@ async function run() {
     process.env.MINTER_FLOW_ADDRESS!,
     process.env.NON_FUNGIBLE_TOKEN_ADDRESS!,
     process.env.MINTER_FLOW_ADDRESS!,
+    process.env.MINTER_FLOW_ADDRESS!
+  );
+  const eventsService = new EventsService(
     process.env.MINTER_FLOW_ADDRESS!
   );
   const app = initApp(kibblesService, kittyItemsService, marketService);

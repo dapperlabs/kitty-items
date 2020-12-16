@@ -48,7 +48,7 @@ function initKibblesRouter(kibblesService: KibblesService): Router {
     "/kibbles/transfer",
     [
       body("recipient").exists(),
-      body("amount").isInt({
+      body("amount").isFloat({
         gt: 0,
       }),
     ],

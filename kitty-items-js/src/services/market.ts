@@ -32,15 +32,16 @@ class MarketService {
 
   getItem = (account: string, itemId: number) => {
     const script = fs
-      .readFileSync(path.join(__dirname, `../../../kitty-items-cadence/cadence/kittyItemsMarket/scripts/read_collection_ids.cdc`), 'utf8')
+      .readFileSync(path.join(__dirname, `../../../kitty-items-cadence/cadence/kittyItemsMarket/scripts/read_sale_offer_details.cdc`), 'utf8')
       .replace(/0xKITTYMARKET/gi, `0x${this.marketAddress}`);
-    return this.flowService.executeScript<any[]>({ script, args: [fcl.arg(account, t.Address), fcl.arg(itemId, t.UInt64)]});
+    return this.flowService.executeScript<any>({ script, args: [fcl.arg(account, t.Address), fcl.arg(itemId, t.UInt64)]});
   }
 
   getItems = (account: string) => {
     const script = fs
       .readFileSync(path.join(__dirname, `../../../kitty-items-cadence/cadence/kittyItemsMarket/scripts/read_collection_ids.cdc`), 'utf8')
       .replace(/0xKITTYMARKET/gi, `0x${this.marketAddress}`);
+    console.log(script);
     return this.flowService.executeScript<number[]>({ script, args: [fcl.arg(account, t.Address)]});
   }
 
@@ -71,6 +72,7 @@ class MarketService {
       .replace(/0xKIBBLE/gi, `0x${this.kibbleAddress}`)
       .replace(/0xKITTYITEMS/gi, `0x${this.kittyItemsAddress}`)
       .replace(/0xKITTYMARKET/gi, `0x${this.marketAddress}`);
+    console.log(transaction);
     return this.flowService.sendTx({
       transaction,
       args: [fcl.arg(itemId, t.UInt64), fcl.arg(price.toString(), t.UFix64)],
