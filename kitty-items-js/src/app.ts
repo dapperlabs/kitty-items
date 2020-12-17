@@ -26,7 +26,7 @@ const initApp = (
   app.use(V1, initKibblesRouter(kibblesService));
   app.use(V1, initKittyItemsRouter(kittyItemsService));
   app.use(V1, initMarketRouter(marketService));
-
+  
   app.all("*", async (req: Request, res: Response) => {
     return res.sendStatus(404);
   });

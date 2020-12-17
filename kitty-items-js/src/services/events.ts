@@ -1,11 +1,10 @@
-import * as fcl from "@onflow/fcl";
 import path from 'path';
 import { Worker } from 'worker_threads';
-import { getEvents } from "@onflow/sdk-build-get-events";
+import {latestBlock} from "@onflow/sdk-latest-block"
 
 class EventsService {
 
-  worker: Worker;
+  workers: Worker[];
 
   kibblesEvents = [
     {
@@ -34,36 +33,45 @@ class EventsService {
     }
   ];
 
-  kibblesEventsList = [
-    'TokensWithdrawn',
-    'TokensDeposited',
-    'TokensMinted',
-    'TokensBurned',
-    'MinterCreated',
-    'BurnerCreated'
-  ]
-
   constructor(
-    private readonly kibbleAddress: string
+    private readonly kibbleAddress: string,
+    private readonly flowNode: string,
   ) {
-    this.worker = new Worker(path.resolve(__dirname, './worker.js'), {
-      workerData: {
-        path: './worker.ts',
-        events: this.kibblesEventsList
-      }
-    });
-    this.worker.on('message', (msg) => {
-      console.log(msg);
-    })
+    this.workers = [];
+    this.initWorkers();
   }
-  
-  // subscribeToEvent = (obj) => {
-  //   fcl.events(obj.key).subscribe(event => {
-  //     console.log("event", event);
-  //     // obj.callback(event)
-  //   });
-    
-  // }
+
+  initWorkers = () => {
+    const events = this.kibblesEvents.map(v => v.key);
+    for (let i = 0; i < events.length; i++) {
+      // workers
+      let worker = new Worker(path.resolve(__dirname, '../workers/worker.js'), {
+        workerData: {
+          path: './event-worker.ts',
+          flowNode: this.flowNode,
+          eventType: `A.${this.kibbleAddress}.Kibble.${events[i]}`
+        }
+      }); 
+      worker.on('message', (events) => {
+        console.log('received events data from event worker',events);
+      });
+      this.workers.push(worker);
+    }
+  }
+
+  fetchEvents = (fromBlock, toBlock) => {
+    for (let i = 0; i < this.workers.length; i++) {
+      this.workers[i].postMessage({
+        fromBlock,
+        toBlock
+      });
+    }
+  }
+
+  init = async () => {
+    let next = await latestBlock()
+    console.log(next)
+  }
 
   // Add these to kibble service
   processTokensWithdrawn(event) {
