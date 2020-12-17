@@ -2,9 +2,9 @@ import { parentPort, workerData } from 'worker_threads';
 import {config} from "@onflow/config"
 import {latestBlock} from "@onflow/sdk-latest-block"
 
-let currentBlockHeight = 18200000;
+let currentBlockHeight = 18205000;
 const stepSize = 1000;
-const tickInterval = 10 * 1000;
+const tickInterval = 5 * 1000;
 
 config()
   .put("accessNode.api", workerData.flowNode)

@@ -68,7 +68,6 @@ async function run() {
     console.log("Listening on port 3000!");
     setTimeout(() => {
       blockService.initWorker();
-      // eventsService.initWorkers();
     }, 1000);
   });
 }

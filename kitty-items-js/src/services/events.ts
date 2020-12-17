@@ -1,40 +1,86 @@
 import path from 'path';
 import { Worker } from 'worker_threads';
-import {latestBlock} from "@onflow/sdk-latest-block"
+
+interface Event {
+  type: string,
+  transactionId: string,
+  transactionIndex: number,
+  eventIndex: number,
+  data:any
+}
+
+interface EventHandler {
+  key: string
+  callback: (event: Event) => void
+}
 
 class EventsService {
 
   workers: Worker[];
 
-  kibblesEvents = [
+  kibblesEvents: EventHandler[] = [
     {
       key: "TokensWithdrawn",
-      callback: this.processTokensWithdrawn
+      callback: this.kibbleTokensWithdrawn
     },
     {
       key: "TokensDeposited",
-      callback: this.processTokensDeposited
+      callback: this.kibbleTokensDeposited
     },
     {
       key: "TokensMinted",
-      callback: this.processTokensMinted
+      callback: this.kibbleTokensMinted
     },
     {
       key: "TokensBurned",
-      callback: this.processTokensBurned
+      callback: this.kibbleTokensBurned
     },
     {
       key: "MinterCreated",
-      callback: this.processMinterCreated
+      callback: this.kibbleMinterCreated
     },
     {
       key: "BurnerCreated",
-      callback: this.processBurnerCreated
+      callback: this.kibbleBurnerCreated
     }
   ];
 
+  kittyItemsEvents: EventHandler[] = [
+    {
+      key: "Withdraw",
+      callback: this.kittyItemWithdrawn
+    },
+    {
+      key: "Deposit",
+      callback: this.kittyItemDeposited
+    },
+  ];
+
+  marketEvents: EventHandler[] = [
+    {
+      key: "SaleOfferCreated",
+      callback: this.saleOfferCreated
+    },
+    {
+      key: "SaleOfferAccepted",
+      callback: this.saleOfferAccepted
+    },
+    {
+      key: "SaleOfferFinished",
+      callback: this.saleOfferFinished
+    },
+    {
+      key: "CollectionInsertedSaleOffer",
+      callback: this.collectionInsertedSaleOffer
+    },
+    {
+      key: "CollectionRemovedSaleOffer",
+      callback: this.collectionRemovedSaleOffer
+    },
+  ]
+
   constructor(
-    private readonly kibbleAddress: string,
+    private readonly contractAddress: string,
     private readonly flowNode: string,
   ) {
     this.workers = [];
@@ -42,18 +88,24 @@ class EventsService {
   }
 
   initWorkers = () => {
-    const events = this.kibblesEvents.map(v => v.key);
-    for (let i = 0; i < events.length; i++) {
-      // workers
+    this.initContractWorker('Kibble', this.kibblesEvents);
+    this.initContractWorker('KittyItems', this.kittyItemsEvents);
+    this.initContractWorker('KittyItemsMarket', this.marketEvents);
+  }
+
+  initContractWorker = (contractName: string, eventsList: EventHandler[]) => {
+    for (let i = 0; i < eventsList.length; i++) {
       let worker = new Worker(path.resolve(__dirname, '../workers/worker.js'), {
         workerData: {
           path: './event-worker.ts',
           flowNode: this.flowNode,
-          eventType: `A.${this.kibbleAddress}.Kibble.${events[i]}`
+          eventType: `A.${this.contractAddress}.${contractName}.${eventsList[i].key}`
         }
       }); 
-      worker.on('message', (events) => {
-        console.log('received events data from event worker',events);
+      worker.on('message', async (events) => {
+        for (let event of events) {
+          await eventsList[i].callback(event)
+        }
       });
       this.workers.push(worker);
     }
@@ -68,34 +120,56 @@ class EventsService {
     }
   }
 
-  init = async () => {
-    let next = await latestBlock()
-    console.log(next)
+  async kibbleTokensWithdrawn(event) {
+    console.log("kibbleTokensWithdrawn", event)
   }
 
-  // Add these to kibble service
-  processTokensWithdrawn(event) {
-    console.log("TokensWithdrawn")
+  async kibbleTokensDeposited(event) {
+    console.log("kibbleTokensDeposited", event)
   }
 
-  processTokensDeposited(event) {
-    console.log("processTokensDeposited")
+  async kibbleTokensMinted(event) {
+    console.log("kibbleTokensMinted", event)
   }
 
-  processTokensMinted(event) {
-    console.log("processTokensMinted")
+  async kibbleTokensBurned(event) {
+    console.log("kibbleTokensBurned", event)
   }
 
-  processTokensBurned(event) {
-    console.log("processTokensBurned")
+  async kibbleMinterCreated(event) {
+    console.log("kibbleMinterCreated", event)
   }
 
-  processMinterCreated(event) {
-    console.log("processMinterCreated")
+  async kibbleBurnerCreated(event) {
+    console.log("kibbleBurnerCreated", event)
   }
 
-  processBurnerCreated(event) {
-    console.log("processBurnerCreated")
+  async kittyItemWithdrawn(event) {
+    console.log("kittyItemWithdrawn", event)
+  }
+
+  async kittyItemDeposited(event) {
+    console.log("kittyItemDeposited", event)
+  }
+
+  async saleOfferCreated(event) {
+    console.log("saleOfferCreated", event)
+  }
+
+  async saleOfferAccepted(event) {
+    console.log("saleOfferAccepted", event)
+  }
+
+  async saleOfferFinished(event) {
+    console.log("saleOfferFinished", event)
+  }
+
+  async collectionInsertedSaleOffer(event) {
+    console.log("collectionInsertedSaleOffer", event)
+  }
+
+  async collectionRemovedSaleOffer(event) {
+    console.log("collectionRemovedSaleOffer", event)
   }
 
 }
