@@ -14,9 +14,9 @@ pub contract KittyItems: NonFungibleToken {
 
     // Named Paths
     //
-    pub let CollectionStoragePath: StoragePath
-    pub let CollectionPublicPath: PublicPath
-    pub let MinterStoragePath: StoragePath
+    pub let CollectionStoragePath: Path
+    pub let CollectionPublicPath: Path
+    pub let MinterStoragePath: Path
 
     // totalSupply
     // The total number of KittyItems that have been minted
@@ -153,14 +153,10 @@ pub contract KittyItems: NonFungibleToken {
 		// and deposit it in the recipients collection using their collection reference
         //
 		pub fun mintNFT(recipient: &{NonFungibleToken.CollectionPublic}, typeID: UInt64) {
-
-			// create a new NFT
-			var newNFT <-create NFT(initID: KittyItems.totalSupply, initTypeID: typeID)
-
-            emit Minted(id: newNFT.id, typeID: newNFT.typeID)
+            emit Minted(id: KittyItems.totalSupply, typeID: typeID)
 
 			// deposit it in the recipient's account using their reference
-			recipient.deposit(token: <-newNFT)
+			recipient.deposit(token: <-create KittyItems.NFT(initID: KittyItems.totalSupply, initTypeID: typeID))
 
             KittyItems.totalSupply = KittyItems.totalSupply + (1 as UInt64)
 		}
