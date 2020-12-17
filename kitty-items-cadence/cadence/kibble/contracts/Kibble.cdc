@@ -38,10 +38,10 @@ pub contract Kibble: FungibleToken {
 
     // Named paths
     //
-    pub let VaultStoragePath: StoragePath
-    pub let ReceiverPublicPath: PublicPath
-    pub let BalancePublicPath: PublicPath
-    pub let AdminStoragePath: StoragePath
+    pub let VaultStoragePath: Path
+    pub let ReceiverPublicPath: Path
+    pub let BalancePublicPath: Path
+    pub let AdminStoragePath: Path
 
     // Total supply of Kibbles in existence
     pub var totalSupply: UFix64
