@@ -1,14 +1,28 @@
 import * as dotenv from "dotenv";
 import * as fcl from "@onflow/fcl";
 import initApp from "./app";
+import Knex from "knex";
 import { KibblesService } from "./services/kibbles";
 import { FlowService } from "./services/flow";
-import { KittyItemsService } from "./services/kittyItems";
+import { KittyItemsService } from "./services/kitty-items";
 import { MarketService } from "./services/market";
 import { EventsService } from "./services/events";
+import { BlocksService } from './services/blocks';
+let knexInstance: Knex;
 
 async function run() {
   dotenv.config();
+
+  knexInstance = Knex({
+    client: "postgresql",
+    connection: process.env.DATABASE_URL!,
+    migrations: {
+      directory: "./src/migrations",
+    },
+  });
+
+  await knexInstance.migrate.latest();
+
   fcl.config().put("accessNode.api", process.env.FLOW_NODE);
   const flowService = new FlowService(
     process.env.MINTER_FLOW_ADDRESS!,
@@ -23,7 +37,7 @@ async function run() {
   const kittyItemsService = new KittyItemsService(
     flowService,
     process.env.NON_FUNGIBLE_TOKEN_ADDRESS!,
-    process.env.MINTER_FLOW_ADDRESS!,
+    process.env.MINTER_FLOW_ADDRESS!
   );
   const marketService = new MarketService(
     flowService,
@@ -34,12 +48,28 @@ async function run() {
     process.env.MINTER_FLOW_ADDRESS!
   );
   const eventsService = new EventsService(
-    process.env.MINTER_FLOW_ADDRESS!
+    process.env.MINTER_FLOW_ADDRESS!,
+    process.env.FLOW_NODE!
   );
-  const app = initApp(kibblesService, kittyItemsService, marketService);
-
+  
+  const blockService = new BlocksService(
+    eventsService,
+    process.env.FLOW_NODE!
+  );
+  
+  const app = initApp(
+    knexInstance,
+    kibblesService,
+    kittyItemsService,
+    marketService
+  );
+  
   app.listen(3000, () => {
     console.log("Listening on port 3000!");
+    setTimeout(() => {
+      blockService.initWorker();
+      // eventsService.initWorkers();
+    }, 1000);
   });
 }
 
